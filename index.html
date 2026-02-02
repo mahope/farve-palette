@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Farve Palette Generator | Gratis Farveskemaer til Design</title>
+    <meta name="title" content="Farve Palette Generator | Gratis Farveskemaer til Design">
+    <meta name="description" content="Generer smukke farvepaletter gratis. Få harmoniske farvekombinationer til web, grafik og branding. Eksporter til CSS, Tailwind, SCSS og mere.">
+    <meta name="keywords" content="farve palette, color scheme generator, farveskema, farvehjul, css farver, tailwind colors, design farver">
+    <meta name="author" content="Mahope.dk">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://farver.holstjensen.eu">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://farver.holstjensen.eu">
+    <meta property="og:title" content="Farve Palette Generator | Gratis Farveskemaer">
+    <meta property="og:description" content="Generer smukke farvepaletter gratis. Harmoniske farvekombinationer til web og design.">
+    <meta property="og:image" content="https://farver.holstjensen.eu/og-image.png">
+    <meta property="og:locale" content="da_DK">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Farve Palette Generator">
+    <meta name="twitter:description" content="Generer smukke farvepaletter gratis.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Farve Palette Generator",
+      "url": "https://farver.holstjensen.eu",
+      "description": "Gratis farvepalette generator til designere og udviklere",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "DKK" }
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --radius: 12px;
+        }
+
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #f472b6, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--muted);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        .mode-select {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--surface);
+            padding: 0.25rem;
+            border-radius: var(--radius);
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .palette-container {
+            display: flex;
+            height: 300px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            margin-bottom: 2rem;
+        }
+
+        .color-swatch {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1rem;
+            cursor: pointer;
+            transition: flex 0.3s;
+            position: relative;
+        }
+
+        .color-swatch:hover {
+            flex: 1.5;
+        }
+
+        .color-info {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: white;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .color-info span {
+            display: block;
+        }
+
+        .copied-toast {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .copied-toast.show {
+            opacity: 1;
+        }
+
+        .export-section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .export-section h2 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .export-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .export-tab {
+            padding: 0.5rem 1rem;
+            background: var(--bg);
+            border: none;
+            border-radius: 8px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .export-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .code-block {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre;
+            position: relative;
+        }
+
+        .copy-code {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .saved-palettes {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .saved-palettes h2 {
+            margin-bottom: 1rem;
+        }
+
+        .saved-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .saved-item {
+            display: flex;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .saved-item:hover {
+            transform: scale(1.05);
+        }
+
+        .saved-color {
+            flex: 1;
+        }
+
+        .seo-content {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .seo-content h2 {
+            margin-bottom: 1rem;
+        }
+
+        .seo-content p {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+        }
+
+        .feature h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem;
+            background: var(--surface);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .base-color-picker {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .base-color-picker input[type="color"] {
+            width: 60px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .palette-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .color-swatch {
+                height: 80px;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle" aria-label="Skift tema">🌙</button>
+
+    <div class="container">
+        <header>
+            <h1>🎨 Farve Palette Generator</h1>
+            <p class="subtitle">Generer harmoniske farvekombinationer til dit næste projekt</p>
+        </header>
+
+        <div class="base-color-picker">
+            <label for="baseColor"><strong>Startfarve:</strong></label>
+            <input type="color" id="baseColor" value="#6366f1">
+            <span id="baseColorHex">#6366f1</span>
+        </div>
+
+        <div class="controls">
+            <div class="mode-select">
+                <button class="mode-btn active" data-mode="random">Tilfældig</button>
+                <button class="mode-btn" data-mode="analogous">Analog</button>
+                <button class="mode-btn" data-mode="complementary">Komplementær</button>
+                <button class="mode-btn" data-mode="triadic">Triadisk</button>
+                <button class="mode-btn" data-mode="monochromatic">Monokromatisk</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" id="generateBtn">✨ Generer Ny Palette</button>
+            <button class="btn-secondary" id="saveBtn">💾 Gem Palette</button>
+            <button class="btn-secondary" id="randomizeBtn">🎲 Helt Tilfældig</button>
+        </div>
+
+        <div class="palette-container" id="palette">
+            <!-- Colors will be inserted here -->
+        </div>
+
+        <div class="export-section">
+            <h2>📋 Eksporter</h2>
+            <div class="export-tabs">
+                <button class="export-tab active" data-format="css">CSS</button>
+                <button class="export-tab" data-format="tailwind">Tailwind</button>
+                <button class="export-tab" data-format="scss">SCSS</button>
+                <button class="export-tab" data-format="json">JSON</button>
+                <button class="export-tab" data-format="array">Array</button>
+            </div>
+            <div class="code-block" id="exportCode">
+                <button class="btn-secondary copy-code" id="copyCode">Kopiér</button>
+                <code id="codeContent"></code>
+            </div>
+        </div>
+
+        <div class="saved-palettes" id="savedSection" style="display: none;">
+            <h2>💾 Gemte Paletter</h2>
+            <div class="saved-list" id="savedList"></div>
+        </div>
+
+        <section class="seo-content">
+            <h2>Om Farve Palette Generatoren</h2>
+            <p>
+                Vores gratis farve palette generator hjælper dig med at skabe harmoniske farvekombinationer 
+                til webdesign, grafisk design, branding og meget mere. Uanset om du arbejder på en ny 
+                hjemmeside, en app eller et kunstprojekt, gør vores værktøj det nemt at finde de perfekte farver.
+            </p>
+            
+            <div class="features">
+                <div class="feature">
+                    <h3>🎯 Farveteorier</h3>
+                    <p>Generer paletter baseret på klassiske farveteorier: analog, komplementær, triadisk og monokromatisk.</p>
+                </div>
+                <div class="feature">
+                    <h3>📤 Nem Eksport</h3>
+                    <p>Eksporter til CSS, Tailwind, SCSS, JSON eller som et simpelt array. Kopiér med ét klik.</p>
+                </div>
+                <div class="feature">
+                    <h3>💾 Gem Lokalt</h3>
+                    <p>Gem dine yndlingspaletter i browseren. De forbliver private og tilgængelige næste gang.</p>
+                </div>
+                <div class="feature">
+                    <h3>🌙 Mørk Tilstand</h3>
+                    <p>Arbejd komfortabelt med mørk eller lys tilstand – skift med ét klik.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Lavet med ❤️ af <a href="https://mahope.dk">Mahope</a></p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                Se også: 
+                <a href="https://qr.holstjensen.eu">QR Generator</a> · 
+                <a href="https://timer.holstjensen.eu">Timer & Stopur</a> · 
+                <a href="https://enheder.holstjensen.eu">Enheder</a> ·
+                <a href="https://citater.holstjensen.eu">Citater</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let currentPalette = [];
+        let currentMode = 'random';
+        let savedPalettes = JSON.parse(localStorage.getItem('savedPalettes') || '[]');
+
+        // DOM Elements
+        const paletteContainer = document.getElementById('palette');
+        const generateBtn = document.getElementById('generateBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const randomizeBtn = document.getElementById('randomizeBtn');
+        const baseColorInput = document.getElementById('baseColor');
+        const baseColorHex = document.getElementById('baseColorHex');
+        const themeToggle = document.getElementById('themeToggle');
+        const exportTabs = document.querySelectorAll('.export-tab');
+        const codeContent = document.getElementById('codeContent');
+        const copyCodeBtn = document.getElementById('copyCode');
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const savedSection = document.getElementById('savedSection');
+        const savedList = document.getElementById('savedList');
+
+        // Color utilities
+        function hexToHsl(hex) {
+            let r = parseInt(hex.slice(1, 3), 16) / 255;
+            let g = parseInt(hex.slice(3, 5), 16) / 255;
+            let b = parseInt(hex.slice(5, 7), 16) / 255;
+
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+
+            return { h: h * 360, s: s * 100, l: l * 100 };
+        }
+
+        function hslToHex(h, s, l) {
+            h = ((h % 360) + 360) % 360;
+            s = Math.max(0, Math.min(100, s)) / 100;
+            l = Math.max(0, Math.min(100, l)) / 100;
+
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            const m = l - c / 2;
+
+            let r, g, b;
+            if (h < 60) { r = c; g = x; b = 0; }
+            else if (h < 120) { r = x; g = c; b = 0; }
+            else if (h < 180) { r = 0; g = c; b = x; }
+            else if (h < 240) { r = 0; g = x; b = c; }
+            else if (h < 300) { r = x; g = 0; b = c; }
+            else { r = c; g = 0; b = x; }
+
+            const toHex = (v) => Math.round((v + m) * 255).toString(16).padStart(2, '0');
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return { r, g, b };
+        }
+
+        function randomHex() {
+            return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        }
+
+        function getContrastColor(hex) {
+            const { r, g, b } = hexToRgb(hex);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+
+        // Palette generation
+        function generatePalette(mode, baseHex) {
+            const base = hexToHsl(baseHex);
+            let colors = [];
+
+            switch (mode) {
+                case 'random':
+                    for (let i = 0; i < 5; i++) {
+                        colors.push(randomHex());
+                    }
+                    break;
+
+                case 'analogous':
+                    for (let i = -2; i <= 2; i++) {
+                        colors.push(hslToHex(base.h + i * 30, base.s, base.l));
+                    }
+                    break;
+
+                case 'complementary':
+                    colors.push(baseHex);
+                    colors.push(hslToHex(base.h, base.s * 0.7, base.l + 15));
+                    colors.push(hslToHex(base.h + 180, base.s, base.l));
+                    colors.push(hslToHex(base.h + 180, base.s * 0.7, base.l - 10));
+                    colors.push(hslToHex(base.h + 180, base.s * 0.5, base.l + 20));
+                    break;
+
+                case 'triadic':
+                    colors.push(baseHex);
+                    colors.push(hslToHex(base.h + 120, base.s, base.l));
+                    colors.push(hslToHex(base.h + 240, base.s, base.l));
+                    colors.push(hslToHex(base.h, base.s * 0.6, base.l + 20));
+                    colors.push(hslToHex(base.h + 120, base.s * 0.6, base.l - 15));
+                    break;
+
+                case 'monochromatic':
+                    for (let i = 0; i < 5; i++) {
+                        const lightness = 20 + i * 15;
+                        const saturation = base.s - i * 5;
+                        colors.push(hslToHex(base.h, saturation, lightness));
+                    }
+                    break;
+            }
+
+            return colors;
+        }
+
+        function renderPalette() {
+            paletteContainer.innerHTML = currentPalette.map((color, i) => {
+                const rgb = hexToRgb(color);
+                const hsl = hexToHsl(color);
+                return `
+                    <div class="color-swatch" style="background: ${color}" data-color="${color}" data-index="${i}">
+                        <div class="copied-toast">Kopieret!</div>
+                        <div class="color-info" style="color: ${getContrastColor(color)}">
+                            <span><strong>HEX:</strong> ${color.toUpperCase()}</span>
+                            <span><strong>RGB:</strong> ${rgb.r}, ${rgb.g}, ${rgb.b}</span>
+                            <span><strong>HSL:</strong> ${Math.round(hsl.h)}°, ${Math.round(hsl.s)}%, ${Math.round(hsl.l)}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click to copy
+            paletteContainer.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    const color = swatch.dataset.color;
+                    navigator.clipboard.writeText(color.toUpperCase());
+                    const toast = swatch.querySelector('.copied-toast');
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 1000);
+                });
+            });
+
+            updateExport();
+        }
+
+        function updateExport() {
+            const format = document.querySelector('.export-tab.active').dataset.format;
+            let code = '';
+
+            switch (format) {
+                case 'css':
+                    code = `:root {\n${currentPalette.map((c, i) => `  --color-${i + 1}: ${c};`).join('\n')}\n}`;
+                    break;
+                case 'tailwind':
+                    code = `colors: {\n${currentPalette.map((c, i) => `  'custom-${i + 1}': '${c}',`).join('\n')}\n}`;
+                    break;
+                case 'scss':
+                    code = currentPalette.map((c, i) => `$color-${i + 1}: ${c};`).join('\n');
+                    break;
+                case 'json':
+                    code = JSON.stringify({ palette: currentPalette }, null, 2);
+                    break;
+                case 'array':
+                    code = JSON.stringify(currentPalette);
+                    break;
+            }
+
+            codeContent.textContent = code;
+        }
+
+        function renderSavedPalettes() {
+            if (savedPalettes.length === 0) {
+                savedSection.style.display = 'none';
+                return;
+            }
+
+            savedSection.style.display = 'block';
+            savedList.innerHTML = savedPalettes.map((palette, i) => `
+                <div class="saved-item" data-index="${i}">
+                    ${palette.map(c => `<div class="saved-color" style="background: ${c}"></div>`).join('')}
+                </div>
+            `).join('');
+
+            savedList.querySelectorAll('.saved-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    currentPalette = savedPalettes[parseInt(item.dataset.index)];
+                    renderPalette();
+                });
+            });
+        }
+
+        // Event listeners
+        generateBtn.addEventListener('click', () => {
+            currentPalette = generatePalette(currentMode, baseColorInput.value);
+            renderPalette();
+        });
+
+        randomizeBtn.addEventListener('click', () => {
+            baseColorInput.value = randomHex();
+            baseColorHex.textContent = baseColorInput.value;
+            currentPalette = generatePalette('random', baseColorInput.value);
+            renderPalette();
+        });
+
+        saveBtn.addEventListener('click', () => {
+            savedPalettes.unshift([...currentPalette]);
+            if (savedPalettes.length > 10) savedPalettes.pop();
+            localStorage.setItem('savedPalettes', JSON.stringify(savedPalettes));
+            renderSavedPalettes();
+        });
+
+        baseColorInput.addEventListener('input', (e) => {
+            baseColorHex.textContent = e.target.value;
+        });
+
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                currentPalette = generatePalette(currentMode, baseColorInput.value);
+                renderPalette();
+            });
+        });
+
+        exportTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                exportTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                updateExport();
+            });
+        });
+
+        copyCodeBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeContent.textContent);
+            copyCodeBtn.textContent = 'Kopieret!';
+            setTimeout(() => copyCodeBtn.textContent = 'Kopiér', 1500);
+        });
+
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.body.hasAttribute('data-theme');
+            if (isLight) {
+                document.body.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙';
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                themeToggle.textContent = '☀️';
+            }
+            localStorage.setItem('theme', isLight ? 'dark' : 'light');
+        });
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+                e.preventDefault();
+                generateBtn.click();
+            }
+        });
+
+        // Init
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            themeToggle.textContent = '☀️';
+        }
+
+        currentPalette = generatePalette(currentMode, baseColorInput.value);
+        renderPalette();
+        renderSavedPalettes();
+    </script>
+</body>
+</html>

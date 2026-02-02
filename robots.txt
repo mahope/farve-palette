@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://farver.holstjensen.eu/sitemap.xml
